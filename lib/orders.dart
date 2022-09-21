@@ -14,7 +14,8 @@ class _ordersState extends State<orders> {
   List<Widget> listWidget = [];
   String baggageNumber = "Baggage Number";
   api common = api();
- 
+  bool _orderTaken = false;
+  bool _scanQR = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
