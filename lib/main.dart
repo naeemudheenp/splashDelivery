@@ -25,11 +25,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'helo'),
-      /*  routes: {
+      
+       routes: {
         '/': (_) => MyHomePage(title: 'Splash Screen'),
         OrdersScreen.routeName: (_) => OrdersScreen(),
-      }, */
+      },
     );
   }
 }
