@@ -73,7 +73,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   primary: _orderTaken
-                                      ? Colors.blueAccent
+                                      ? Colors.blueGrey[400]
                                       : Colors.green,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
