@@ -4,6 +4,9 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:splashdelivery/api.dart';
 
+import 'job.dart';
+import 'openScanner.dart';
+
 class history extends StatefulWidget {
   const history({Key? key}) : super(key: key);
 
@@ -15,17 +18,25 @@ class _historyState extends State<history> {
   List<Widget> listWidget = [];
   String baggageNumber = "Baggage Number";
   api common = api();
-  bool _orderTaken = false;
-  bool _scanQR = false;
+
+  List _orderbuttonStatus=[false,false,false,false,false,false,false,false,false,false,false,];
+  List _scanbuttonStatus=[false,false,false,false,false,false,false,false,false,false,false,];
+  int count=0;
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Splash Delivery"),
         centerTitle: true,
         backgroundColor: Colors.blueGrey[400],
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.qr_code_scanner))
+          IconButton(onPressed: () async{
+            String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+                "#ff6666", "Cancel", false, ScanMode.DEFAULT);
+            common.sentPref('baggageNumber', barcodeScanRes);
+            common.gotoPage(job(), context);
+          }, icon: Icon(Icons.qr_code_scanner))
         ],
       ),
       body: Center(
@@ -36,13 +47,22 @@ class _historyState extends State<history> {
             StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection("request")
+                    .where("delRequest",isEqualTo: 0)
                     .get()
                     .asStream(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
+
+
                     listWidget.clear();
                     snapshot.data?.docs.forEach((element) {
+
+
+
+
+                      print(count);
+
                       listWidget.add(
                           //New
                           Padding(
@@ -87,79 +107,123 @@ class _historyState extends State<history> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: [
-                                    //Scanning button only appears if Order is accepted
-                                    if (_orderTaken == true)
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            primary: Colors.blueGrey[400],
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            )),
-                                        onPressed: () {
-                                          setState(() {
-                                            final data = {
-                                              "status": "Waiting For Wash.",
-                                              "baggageNumber":
-                                                  element['baggageNumber']
-                                                      .toString()
-                                            };
-
-                                            common.updateFirebase(
-                                                element.reference.id,
-                                                data,
-                                                'request');
-                                          });
-                                        },
-                                        child: const Text('Scan QR'),
-                                      ),
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                          primary: _orderTaken
+                                          primary: Colors.blueGrey[400],
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(20),
+                                          )),
+                                      onPressed: () async{
+                                        setState(() async {
+                                          String barCode="69998";
+                                          barCode=await FlutterBarcodeScanner.scanBarcode(
+                                              "#ff6666", "Cancel", false, ScanMode.DEFAULT);
+
+
+
+                                          final data = {"baggageNumber":barCode.toString() };
+                                          common.updateFirebase(element.reference.id, data, 'request');
+                                          showToastWidget(Text('Baggage Number Addedd Succefully'));
+
+
+
+                                          setState(() { });
+                                        });
+                                      },
+                                      child: const Text('Scan QR'),
+                                    ),
+
+
+
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: _orderbuttonStatus[count]
                                               ? Colors.blueAccent
                                               : Colors.green,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(20),
+                                            BorderRadius.circular(20),
                                           )),
                                       onPressed: () {
                                         setState(() {
-                                          _scanQR = true;
 
-                                          if (_orderTaken = false) {
+
+
                                             final data = {
                                               "status":
-                                                  "Delivery Person Will Pickup Soon.",
+                                              "Delivery Person Will Pickup Soon.",
                                             };
                                             common.updateFirebase(
                                                 element.reference.id,
                                                 data,
                                                 'request');
-                                          }
+                                          });}
 
-                                          if (_orderTaken) {
+
+                                      ,
+                                      child: Text(
+                                          "Accept"),
+                                    ),
+
+
+
+
+
+
+
+
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: _orderbuttonStatus[count]
+                                              ? Colors.blueAccent
+                                              : Colors.green,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(20),
+                                          )),
+                                      onPressed: () {
+                                        setState(() {
+                                          _scanbuttonStatus[count] = true;
+
+
+
                                             final data = {
                                               "status": "Waiting For Wash.",
                                               "baggageNumber":
-                                                  element['baggageNumber']
-                                                      .toString()
+                                              element['baggageNumber']
+                                                  .toString(),
+                                              "delRequest":1
                                             };
-
                                             common.updateFirebase(
                                                 element.reference.id,
                                                 data,
                                                 'request');
-                                          }
-                                          //  _orderTaken = !_orderTaken;
-                                          /* _orderTaken
-                                      ? Colors.blueAccent
-                                      : Colors.green, */
-                                          _orderTaken = true;
+
+
+
+
                                         });
                                       },
                                       child: Text(
-                                          _orderTaken ? 'Delivered' : "Accekt"),
+                                           'Delivered'),
                                     ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                   ],
                                 ),
                               )
@@ -167,9 +231,10 @@ class _historyState extends State<history> {
                           ),
                         ),
                       ));
-
+                      count=count+1;
                       //Old
                     });
+                    print(_orderbuttonStatus);
                     return Container(
                         height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,

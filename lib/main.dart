@@ -1,4 +1,6 @@
-import 'dart:html';
+
+
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,6 +14,7 @@ import 'package:splashdelivery/screens/orders.dart';
 void main() async {
   runApp(const MyApp());
   await Firebase.initializeApp();
+  sleep(Duration(seconds:10));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,11 +28,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      
-       routes: {
-        '/': (_) => MyHomePage(title: 'Splash Screen'),
-        OrdersScreen.routeName: (_) => OrdersScreen(),
-      },
+      home: MyHomePage(title: "hello"),
+
     );
   }
 }
