@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +25,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      routes: {
+      home: MyHomePage(title: 'helo'),
+      /*  routes: {
         '/': (_) => MyHomePage(title: 'Splash Screen'),
         OrdersScreen.routeName: (_) => OrdersScreen(),
-      },
+      }, */
     );
   }
 }
