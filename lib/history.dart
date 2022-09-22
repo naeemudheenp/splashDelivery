@@ -18,6 +18,7 @@ class _historyState extends State<history> {
   List<Widget> listWidget = [];
   String baggageNumber = "Baggage Number";
   api common = api();
+  late String barCode;
 
   List _orderbuttonStatus=[false,false,false,false,false,false,false,false,false,false,false,];
   List _scanbuttonStatus=[false,false,false,false,false,false,false,false,false,false,false,];
@@ -116,7 +117,7 @@ class _historyState extends State<history> {
                                           )),
                                       onPressed: () async{
                                         setState(() async {
-                                          String barCode="69998";
+                                           barCode="69998";
                                           barCode=await FlutterBarcodeScanner.scanBarcode(
                                               "#ff6666", "Cancel", false, ScanMode.DEFAULT);
 
@@ -191,7 +192,7 @@ class _historyState extends State<history> {
                                             final data = {
                                               "status": "Waiting For Wash.",
                                               "baggageNumber":
-                                              element['baggageNumber']
+                                              barCode
                                                   .toString(),
                                               "delRequest":1
                                             };
